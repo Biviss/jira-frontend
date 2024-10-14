@@ -24,21 +24,25 @@ const Login = () => {
   }
 
   const handleSubmit = async (event) =>{
-   
+    navigate('/')
   }
 
   return (
     <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-      <Title level={2} style={{ class: "" }}>JIRA</Title>
+      <h1 level={2} className="font-londrina text-5xl flex justify-center text-blue-500">Jira</h1>
       <Form layout="vertical">
-        <Form.Item label="Username" required>
-          <Input 
+      <Form.Item 
+        label={<span className="font-barlow">Username</span>}
+        required>          
+        <Input 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
             placeholder="Enter username" 
           />
         </Form.Item>
-        <Form.Item label="Password" required>
+        <Form.Item 
+          label={<span className="font-barlow">Password</span>}
+          required>
           <Input.Password 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
@@ -46,12 +50,14 @@ const Login = () => {
           />
         </Form.Item>
         <Space direction="vertical" style={{ width: '100%' }}>
-          <Button type="primary" loading={loading} htmlType="submit" onClick={handleSubmit}>
+          <div className="flex justify-between">
+          <Button type="primary" className="font-barlow" loading={loading} htmlType="submit" onClick={handleSubmit}>
             {loading ? 'Login...' : 'Login'}
           </Button>
-          <Button type="default" disabled={loading} onClick={handleRegister}>
+          <Button type="link" className="font-barlow" danger disabled={loading} onClick={handleRegister}>
             {loading ? 'Login...' : 'Register'}
           </Button>
+          </div>
         </Space>
         {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
       </Form>
