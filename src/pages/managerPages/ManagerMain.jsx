@@ -1,7 +1,6 @@
 import { Navigate, Outlet, useNavigate,NavLink } from "react-router-dom";
 import { useEffect, useState,useContext,useRef } from 'react'
 import React from 'react';
-import { Project } from "./Project";
 import { Button, Flex ,Space,Col, Row,Table,Typography, Layout,Input,Popconfirm,InputNumber
   ,Form,Dropdown,Menu, Select,Switch, Breadcrumb, theme, } from 'antd';
 
@@ -19,22 +18,20 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
     NotificationOutlined
   } from '@ant-design/icons';
 
-const { Text, Link } = Typography;
-const { Option } = Select;
 const { Header, Content, Footer, Sider } = Layout;
 
 const items1 = [
   { key: 'projects', label: <NavLink to="/projects">Projects</NavLink> },
   { key: 'tasks', label: <NavLink to="/tasks">Tasks</NavLink> },
-  { key: 'report', label: <NavLink to="/report">Report</NavLink> },
+  { key: 'report', label: <NavLink to="report">Report</NavLink> },  
 ];
 
 
-export const Main = () => {
+export const ManagerMain = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer},
   } = theme.useToken();
 
   return (
@@ -56,13 +53,15 @@ export const Main = () => {
               items={items1}
               style={{
               flex: 1,
-              justifyContent: 'center',
+              justifyContent: 'center', 
               }}/>
           </div>
         </Header>
-        <Routes>
-          <Route path='/projects' element={<Project/>}/>
-        </Routes>
+        <Content style={{background: colorBgContainer}}>
+          <Routes>
+            <Route path='/projects/*'/>
+          </Routes>
+        </Content>
     </Layout>
   );
 };
