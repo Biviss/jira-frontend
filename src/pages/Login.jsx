@@ -1,18 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Form, Input, Button, Space, Typography,message  } from 'antd';
+import { useState, useContext } from "react";
+import { UserContext } from "../context/UserContext";
+import { Form, Input, Button, Space, Typography,message,Select  } from 'antd';
+import axios from "axios";
 
-const { Title } = Typography;
 const Login = () => {
-  const [username, setUsername] = useState('')
+  const { dispatch } = useContext(UserContext);
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('user')
   const [loading, setLoading] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate();
 
   const validateForm = () => {
-    if(!username || ! password){
-      setError('Username or password are required');
+    if(!email || ! password){
+      setError('Email or password are required');
       return false;
     }
     setError('');
@@ -20,11 +23,84 @@ const Login = () => {
   }
 
   const handleRegister = async(event) =>{
-    
+    event.preventDefault();
+    if(!validateForm()){
+      return
+    }
+    const formDetails = new URLSearchParams();
+    formDetails.append('email',email);
+    formDetails.append('password',password);
+    formDetails.append('role',role);
+    try{
+      const response = await axios.post('http://localhost:3000/auth/register', {
+        email: email,
+        password: password,
+        role: role,
+      })
+
+      if(response){
+        message.success('Register succsess, please login!', 3);
+      }
+      if(response.status == 401){
+        setError('This user not exist')
+      }
+    }
+    catch (error){
+      console.log(error)
+      setError('An error occured')
+    }
   }
 
   const handleSubmit = async (event) =>{
-    navigate('/')
+    localStorage.clear();
+    event.preventDefault();
+    if(!validateForm()){
+      return
+    }
+    setLoading(true)
+    const formDetails = new URLSearchParams();
+    formDetails.append('email',email);
+    formDetails.append('password',password);
+
+    try{
+      const response = await fetch('http://localhost:3000/auth/login', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formDetails,
+      });
+      setLoading(false);
+      if(response.ok){
+        const data = await response.json();
+        localStorage.setItem('token',data.accessToken)
+        const responseVerify = await axios.get("http://localhost:3000/auth/verify_user", {
+          params: {
+            token: data.accessToken,
+          },
+        });
+        let user = responseVerify.data
+        dispatch({ type: 'LOGIN', payload: user });        
+        if(user.role === 'admin'){
+          navigate('/admin')
+        }
+        else if(user.role === 'developer'){
+          navigate('/')
+        }
+        else if(user.role === 'manager'){
+          navigate('/')
+        }
+      }
+      else{
+        setLoading(false);
+        setError('This user not exist')
+      }
+    }
+    catch (error){
+      console.log(error)
+      setLoading(false);
+      setError('An error occured')
+    }
   }
 
   return (
@@ -32,12 +108,12 @@ const Login = () => {
       <h1 level={2} className="font-londrina text-5xl flex justify-center text-blue-500">Jira</h1>
       <Form layout="vertical">
       <Form.Item 
-        label={<span className="font-barlow">Username</span>}
+        label={<span className="font-barlow">Email</span>}
         required>          
         <Input 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            placeholder="Enter username" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="Enter email" 
           />
         </Form.Item>
         <Form.Item 
@@ -48,6 +124,35 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)} 
             placeholder="Enter password" 
           />
+          
+        </Form.Item>
+        <Form.Item 
+          label={<span className="font-barlow">Role</span>}
+          required>
+          <Select
+            defaultValue="user"
+            onChange={(e) => {
+              console.log(e)
+              setRole(e)
+              console.log(role)
+            }}
+            options={[
+              {
+                value: 'admin',
+                label: 'admin',
+              },
+              {
+                value: 'manager',
+                label: 'manager',
+              },
+              {
+                value: 'developer',
+                label: 'developer',
+              },
+            ]}
+          >
+          </Select>
+          
         </Form.Item>
         <Space direction="vertical" style={{ width: '100%' }}>
           <div className="flex justify-between">
