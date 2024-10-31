@@ -11,7 +11,7 @@ const fetch = async (value, callback) => {
     }
     currentValue = value;
     const fake = async () => {
-        const responseVerify = await axios.get("http://localhost:3000/auth/", {});
+        const responseVerify = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/`, {});
         callback(responseVerify.data
         .filter((user) => user.email.startsWith(currentValue))
         .map((user) => ({

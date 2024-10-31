@@ -8,6 +8,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Button, Flex ,Space,Col, Row,Table,Typography, Layout,Input,Popconfirm,InputNumber
   ,Form,Dropdown,Menu, Select,Switch, Breadcrumb, theme, Card,List,Tooltip,message  } from 'antd';
 
+import { useMediaQuery } from 'react-responsive';
+
 import {
   SearchOutlined,
   PlusOutlined,
@@ -36,6 +38,9 @@ export const DashBoard = () => {
   const [activeSection, setActiveSection] = useState(null);
   const [title, setTitle] = useState('');
 
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+
+
   const handleCreate = (index) => {
     setActiveSection(index);
   };
@@ -57,7 +62,7 @@ export const DashBoard = () => {
       deadline: deadline.toISOString().split('T')[0],
       priority: "Medium",
     };
-    const response = await axios.post('http://localhost:3000/tasks', newTask, {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/tasks`, newTask, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -66,12 +71,12 @@ export const DashBoard = () => {
     appendData();
     setActiveSection(null);
   };
-
+  
   const appendData = async () => {
-    let response = await axios.get(`http://localhost:3000/projects/${id}`);
+    let response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/projects/${id}`);
     setTasks(response.data.tasks);
     setFilterTasks(response.data.tasks)
-};
+  };
 
   useEffect(() => {
     appendData();
@@ -115,14 +120,14 @@ export const DashBoard = () => {
   const handleDelete = async (id) => {
     const updatedData = tasks.filter(element => element.id !== id);
     setFilterTasks(updatedData);
-    await axios.delete(`http://localhost:3000/tasks/${id}`);
+    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/tasks/${id}`);
     message.success('Task deleted successfully!');
     appendData();
   };
 
   return (
-    <div onClick={handleClickOutside}>
-      <div className="flex justify-between" style={{ paddingLeft: '40px', paddingTop: '20px', paddingRight: '40px' }}>
+    <div className="" onClick={handleClickOutside}>
+      <div className="flex" style={{ paddingLeft: '40px', paddingTop: '20px', paddingRight: '40px' }}>
         <div>
           <Select
           defaultValue="All"
@@ -161,15 +166,15 @@ export const DashBoard = () => {
             ]}
           />
         </div>
-       <div className="flex" >
-        <Input style={{marginRight: '20px'}} onPressEnter={handleSeach} onChange={(e) => setExecutor(e.target.value)}/>
+       <div className="flex">
+        <Input className="mr-[20px]" onPressEnter={handleSeach} onChange={(e) => setExecutor(e.target.value)}/>
         <Tooltip title="search">
           <Button shape="circle" onClick={handleSeach} icon={<SearchOutlined />} />
         </Tooltip>
        </div>
       </div>
       <DndProvider backend={HTML5Backend}>
-      <div className="flex gap-16 justify-center" style={{ paddingLeft: '30px', paddingTop: '15px', paddingRight: '30px'}}>
+      <div className="flex overflow-x-auto" style={{ paddingLeft: '30px', paddingTop: '15px', paddingRight: '30px'}}>
       {statuses.map((status, index) => (
         <Section
           key={index}

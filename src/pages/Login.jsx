@@ -32,7 +32,7 @@ const Login = () => {
     formDetails.append('password',password);
     formDetails.append('role',role);
     try{
-      const response = await axios.post('http://localhost:3000/auth/register', {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/register`, {
         email: email,
         password: password,
         role: role,
@@ -62,7 +62,7 @@ const Login = () => {
     formDetails.append('email',email);
     formDetails.append('password',password);
     try{
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -73,7 +73,7 @@ const Login = () => {
       if(response.ok){
         const data = await response.json();
         localStorage.setItem('token',data.accessToken)
-        const responseVerify = await axios.get("http://localhost:3000/auth/verify_user", {
+        const responseVerify = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/verify_user`, {
           params: {
             token: data.accessToken,
           },

@@ -15,13 +15,13 @@ export const CreateProject = () => {
   }
   const handleCreate = async () => {
     const token = localStorage.getItem("token");
-    const userResponse = await axios.get("http://localhost:3000/auth/verify_user", {
+    const userResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/verify_user`, {
       params: {
         token: token,
       },
     });
 
-    const response = await axios.post('http://localhost:3000/projects', {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/projects`, {
       title: title,
       description: description,
       creator: {

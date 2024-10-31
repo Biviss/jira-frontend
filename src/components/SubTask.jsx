@@ -12,7 +12,7 @@ export const Section = ({}) => {
     const [tasks, setTasks] = useState([]);
     
     const appendSubTasks = async() =>{
-      const response = await axios.get(`http://localhost:3000/tasks/subtasks/${taskState.selectedTask.id}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/subtasks/${taskState.selectedTask.id}`, {
         headers: {
             'Content-Type': 'application/json',
         },
@@ -24,7 +24,7 @@ export const Section = ({}) => {
   }, []);
 
   const deleteSubTaskHandler = async (task) => {
-    const response = await axios.delete(`http://localhost:3000/subtasks/${task.id}`, {
+    const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/subtasks/${task.id}`, {
       headers: {
           'Content-Type': 'application/json',
       },
@@ -38,7 +38,7 @@ export const Section = ({}) => {
             "status": "In Progress",
             "taskId": taskState.selectedTask.id,
         };
-        await axios.post('http://localhost:3000/subtasks', subTask, {
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/subtasks`, subTask, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -54,7 +54,7 @@ export const Section = ({}) => {
           "executorId":executorId,
           "taskId": taskState.selectedTask.id,
       };
-      await axios.put(`http://localhost:3000/subtasks/${subTask.id}`, addExecutorSubTask, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/subtasks/${subTask.id}`, addExecutorSubTask, {
           headers: {
               'Content-Type': 'application/json',
           },

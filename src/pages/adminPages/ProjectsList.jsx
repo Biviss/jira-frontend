@@ -15,7 +15,7 @@ export const ProjectsList = () => {
 
     const appendData = () => {
         let user = JSON.parse(localStorage.getItem('user'));
-        fetch(`http://localhost:3000/auth/projects/${user.id}`)
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/projects/${user.id}`)
             .then((res) => res.json())
             .then((body) => {
                 setData(body);
@@ -33,7 +33,7 @@ export const ProjectsList = () => {
     const handleDelete = async (item) => {
         const updatedData = data.filter(element => element !== item);
         setData(updatedData);
-        await axios.delete(`http://localhost:3000/projects/${item.id}`);
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/projects/${item.id}`);
         message.success('Project deleted successfully!');
     };
 

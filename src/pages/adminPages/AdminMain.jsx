@@ -57,7 +57,7 @@ export const AdminMain = ({}) => {
               }}/>
           </div>
         </Header>
-        <Content className="h-full" style={{background: colorBgContainer}}>
+        <Content className="h-full w-full" style={{background: colorBgContainer}}>
           <Routes>
             <Route path='projects/*' element={<ProjectsList />}/>
             <Route path='projects/:id/tasks/*' element={<Project/>}/>

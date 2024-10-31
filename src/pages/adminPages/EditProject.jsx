@@ -11,7 +11,7 @@ export const EditProject = () => {
   useEffect(() => {
     const loadProject = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/projects/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/projects/${id}`);
         console.log(response);
         form.setFieldsValue({ 
           name: response.data.title,
@@ -32,7 +32,7 @@ export const EditProject = () => {
   const handleEdit = async () => {
     const values = await form.validateFields();
     try {
-      await axios.put(`http://localhost:3000/projects/${id}`, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/projects/${id}`, {
         title: values.name,
         description: values.description,
       });

@@ -24,16 +24,16 @@ export const Project = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   return (
-    <Layout style={{paddingTop: '10px', background: colorBgContainer}}>
-        <Sider trigger={null} collapsible collapsed={collapsed}
-        style={{
-            background: colorBgContainer
-          }}>
+    <Layout className="h-full w-full" style={{paddingTop: '10px', background: colorBgContainer}}>
+        <Sider 
+        className="h-full"
+        trigger={null} collapsible collapsed={collapsed}>
         <Menu
           theme="light"
           mode="inline"
           style={{ borderRight: 'none'}}
           defaultSelectedKeys={['1']}
+          className="h-full w-full"
           items={[
             {
               key: '1',

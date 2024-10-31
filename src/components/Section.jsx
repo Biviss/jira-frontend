@@ -40,7 +40,7 @@ export const Section = ({ status, tasks, setTasks, taskList,isActive, onActivate
         const mTasks = prev.map(t => {
           if(t.id === id){
             t.status = status;
-            const response = axios.patch(`http://localhost:3000/board/${id}/status`, { status });
+            const response = axios.patch(`${import.meta.env.VITE_API_BASE_URL}/board/${id}/status`, { status });
             return t;
           }
           return t;
@@ -52,12 +52,12 @@ export const Section = ({ status, tasks, setTasks, taskList,isActive, onActivate
     }
   
     const handleClick = async (task) =>{
-      let response = await axios.get(`http://localhost:3000/tasks/${task.id}`)
+      let response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${task.id}`)
       taskDispatch({ type: 'OPEN_POPUP', payload: response.data });        
     }
   
     return (
-      <div ref={drop} className={`w-64 rounded-md p-2 ${isOver ? "bg-slate-100" : ""}`}>
+      <div ref={drop} className={`min-w-40 w-64 rounded-md p-2 ${isOver ? "bg-slate-100" : ""}`}>
         <Header text={status} />
         <div className="overflow-y-auto max-h-[270px] custom-scrollbar">
         {taskList.map((task) => (

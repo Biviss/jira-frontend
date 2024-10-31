@@ -28,7 +28,7 @@ export const Task = ({isOpen, onClose, task}) => {
     const [isActiveSubTask, setIsActiveSubTask] = useState(false);
     const [subtasks, setSubTasks] = useState([]);
     const getComments = async() => {
-        let response = await axios.get(`http://localhost:3000/comments/task/${task.id}`);
+        let response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/comments/task/${task.id}`);
         setComments(response.data)
     }
     useEffect(()=>{
@@ -69,7 +69,7 @@ export const Task = ({isOpen, onClose, task}) => {
             priority: priority,
             deadline: deadline,
           };
-          axios.put(`http://localhost:3000/tasks/${task.id}`, updateTask);
+          axios.put(`${import.meta.env.VITE_API_BASE_URL}/tasks/${task.id}`, updateTask);
     }
 
     const onScroll = (e) => {
@@ -78,9 +78,9 @@ export const Task = ({isOpen, onClose, task}) => {
       };
 
     const addExecutor = async (id) => {
-        const response = await axios.post(`http://localhost:3000/tasks/${task.id}/executors/${id}`, {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/tasks/${task.id}/executors/${id}`, {
         });
-        const responseTask = await axios.get(`http://localhost:3000/tasks/${task.id}`, {
+        const responseTask = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${task.id}`, {
         });
         task.executors = responseTask.data.executors;
         setExecutors(responseTask.data.executors);
@@ -88,7 +88,7 @@ export const Task = ({isOpen, onClose, task}) => {
 
     const addComment = async () =>{
         let user = JSON.parse(localStorage.getItem('user'));
-        let response = await axios.post('http://localhost:3000/comments', {
+        let response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/comments`, {
             text: comment,
             authorId: user.id,
             taskId: task.id
@@ -102,9 +102,9 @@ export const Task = ({isOpen, onClose, task}) => {
     }
 
     const handleClose = async (removedTag) => {
-        const response = await axios.delete(`http://localhost:3000/tasks/${task.id}/executors/${removedTag.id}`, {
+        const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/tasks/${task.id}/executors/${removedTag.id}`, {
         });
-        const responseTask = await axios.get(`http://localhost:3000/tasks/${task.id}`, {
+        const responseTask = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${task.id}`, {
         });
         task.executors = responseTask.data.executors;
         setExecutors(responseTask.data.executors);
