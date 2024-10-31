@@ -16,22 +16,24 @@ import ProtectedRouteAdmin from "./routes/ProtectedRouteAdmin";
 import ProtectedRouteDeveloper  from "./routes/ProtectedRouteDeveloper";
 import { UserProvider } from "./context/UserContext";
 import { TaskProvider } from "./context/TaskContext";
-
+import {NotificationProvider} from "./context/NotificationContext"
 const App = () => {
   return (
     <UserProvider>
         <TaskProvider>
-        <Routes>
-      <Route path='/login' element={<Login />} />
-      <Route element={<ProtectedRouteAdmin />}>
-        <Route exact path="/admin/*" element={<AdminMain />} />
-        <Route exact path='/admin/projects/createProject' element={<CreateProject />} />
-        <Route exact path='/admin/projects/editProject/:id' element={<EditProject />} />
-      </Route>
-      <Route element={<ProtectedRouteDeveloper />}>
-        <Route exact path="/*" element={<DeveloperMain />} />
-      </Route>
-    </Routes>
+            <NotificationProvider>
+            <Routes>
+              <Route path='/login' element={<Login />} />
+                <Route element={<ProtectedRouteAdmin />}>
+                <Route exact path="/admin/*" element={<AdminMain />} />
+                <Route exact path='/admin/projects/createProject' element={<CreateProject />} />
+                <Route exact path='/admin/projects/editProject/:id' element={<EditProject />} />
+              </Route>
+              <Route element={<ProtectedRouteDeveloper />}>
+                <Route exact path="/*" element={<DeveloperMain />} />
+              </Route>
+            </Routes>
+            </NotificationProvider>
         </TaskProvider>
     </UserProvider>
     

@@ -15,24 +15,54 @@ import { SubTaskProvider } from "../../context/SubTaskContext";
 import {
   BilibiliOutlined,
 } from '@ant-design/icons';
+import { Notification } from "./Notification";
+import { NotificationContext } from "../../context/NotificationContext";
+import axios from "axios";
 
 const { Header, Content, Footer, Sider } = Layout;
-
-const navigate = [
-  { key: 'projects', label: <NavLink to="projects">Projects</NavLink> },
-  { key: 'notification', label: <NavLink to="notification">Notification</NavLink> },
-];
-
+ 
 export const AdminMain = ({}) => {
   const { state: userState, dispatch: userDispatch } = useContext(UserContext);
   const { state: taskState, dispatch: taskDispatch } = useContext(TaskContext);
+  const { state: notificationState,dispatch:notificationDispatch} = useContext(NotificationContext);
+
 
   const [isOpenTask, setIsOpenTask] = useState(false);
   const [openTask, setOpenTask] = useState();
+  const [data, setData] = useState([]);
+
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/notifications`);
+        setData(response.data);
+        if (data.length !== response.data.length) {
+          notificationDispatch({ type: 'SET_NOTIFICATION' });
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+
+    const intervalId = setInterval(fetchNotifications, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [data]);
 
   const {
     token: { colorBgContainer},
   } = theme.useToken();
+
+  const navigate = [
+    { key: 'projects', label: <NavLink to="projects">Projects</NavLink> },
+    { key: 'notification', label: <div>
+        <NavLink to="notification">Notification</NavLink> 
+        {notificationState.hasNotification && (<div className="absolute m-2 bottom-0 right-0 w-2 h-2 bg-yellow-500 rounded-full border border-white" />)}
+    </div>},
+  ];
 
   return (
     <Layout className="h-full">
@@ -61,6 +91,7 @@ export const AdminMain = ({}) => {
           <Routes>
             <Route path='projects/*' element={<ProjectsList />}/>
             <Route path='projects/:id/tasks/*' element={<Project/>}/>
+            <Route path='notification/*' element={<Notification/>}/>
           </Routes>
         </Content>
         <SubTaskProvider>

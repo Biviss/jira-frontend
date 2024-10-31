@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -20,7 +21,8 @@
     "react-dom": "^18.3.1",
     "react-responsive": "^10.0.0",
     "react-router-dom": "^6.26.2",
-    "react-scrollbars-custom": "^4.1.1"
+    "react-scrollbars-custom": "^4.1.1",
+    "recharts": "^2.13.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

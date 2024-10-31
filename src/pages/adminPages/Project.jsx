@@ -12,6 +12,7 @@ import {
   UnorderedListOutlined,
   BarChartOutlined,
   } from '@ant-design/icons';
+import Chart from "./Chart";
 
 
 const { Header, Content, Sider } = Layout;
@@ -48,7 +49,7 @@ export const Project = () => {
       </Sider>
       <Content>
         <Routes>
-          <Route path='chart' element={<Tasks/>}/>
+          <Route path='chart' element={<Chart/>}/>
           <Route path='dashboard' element={<DashBoard />}/>
         </Routes>
       </Content>
