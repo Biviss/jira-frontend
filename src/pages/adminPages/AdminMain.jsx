@@ -11,24 +11,16 @@ import { Button, Flex ,Space,Col, Row,Table,Typography, Layout,Input,Popconfirm,
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserContext } from "../../context/UserContext";
 import { TaskContext } from "../../context/TaskContext";
-
+import { SubTaskProvider } from "../../context/SubTaskContext";
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
   BilibiliOutlined,
-  LaptopOutlined,
-  NotificationOutlined
 } from '@ant-design/icons';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const navigate = [
   { key: 'projects', label: <NavLink to="projects">Projects</NavLink> },
-  { key: 'tasks', label: <NavLink to="tasks">Tasks</NavLink> },
-  { key: 'report', label: <NavLink to="report">Report</NavLink> },
+  { key: 'notification', label: <NavLink to="notification">Notification</NavLink> },
 ];
 
 export const AdminMain = ({}) => {
@@ -43,7 +35,7 @@ export const AdminMain = ({}) => {
   } = theme.useToken();
 
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout className="h-full">
        <Header
         style={{
           background: colorBgContainer,
@@ -65,13 +57,15 @@ export const AdminMain = ({}) => {
               }}/>
           </div>
         </Header>
-        <Content style={{background: colorBgContainer}}>
+        <Content className="h-full" style={{background: colorBgContainer}}>
           <Routes>
             <Route path='projects/*' element={<ProjectsList />}/>
-            <Route path='projects/:id/tasks/*' element={<Project isOpenTask={isOpenTask} setOpenTask={setOpenTask} setIsOpenTask={setIsOpenTask}/>}/>
+            <Route path='projects/:id/tasks/*' element={<Project/>}/>
           </Routes>
         </Content>
+        <SubTaskProvider>
         <Task isOpen={taskState.isOpenTask} onClose={() => taskDispatch({ type: 'CLOSE_POPUP' })} task={taskState.selectedTask}/>
+        </SubTaskProvider>
     </Layout>
   );
 };

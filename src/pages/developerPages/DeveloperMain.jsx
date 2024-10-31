@@ -5,18 +5,12 @@ import { Button, Flex ,Space,Col, Row,Table,Typography, Layout,Input,Popconfirm,
   ,Form,Dropdown,Menu, Select,Switch, Breadcrumb, theme, } from 'antd';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ProjectList } from "./ProjectList";
+import { Project } from "./Project";
 
-
-  import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-    BilibiliOutlined,
-    LaptopOutlined,
-    NotificationOutlined
-  } from '@ant-design/icons';
+import {
+  BilibiliOutlined,
+} from '@ant-design/icons';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -59,7 +53,8 @@ export const DeveloperMain = () => {
         </Header>
         <Content style={{background: colorBgContainer}}>
           <Routes>
-            <Route path='/projects/*'/>
+            <Route path='/projects/*' element={<ProjectList/>}/>
+            <Route path='projects/:id/tasks/*' element={<Project/>}/>
           </Routes>
         </Content>
     </Layout>

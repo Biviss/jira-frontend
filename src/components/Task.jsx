@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { Button, Flex ,Space,Col, Row,Table,Typography, Layout,Input,Popconfirm,InputNumber
 ,Form,Dropdown,Menu, Select,Switch, Breadcrumb, theme, Card,List,Tooltip,message,Tag,DatePicker,Avatar   } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import { SearchInput } from './SelectInput';
 import { Navigate, Outlet, useNavigate, NavLink } from "react-router-dom";
+import dayjs from 'dayjs';
+import { Section } from './SubTask';
+import { SubTaskContext } from '../context/SubTaskContext';
 
 import {
     CloseOutlined,
@@ -12,6 +15,7 @@ import {
 import axios from 'axios';
 
 export const Task = ({isOpen, onClose, task}) => {
+    const { state: subTaskState, dispatch: subTaskDispatch } = useContext(SubTaskContext);
     const [executors, setExecutors] = useState([]);
     const [comments, setComments] = useState([]);
     const [title, setTitle] = useState('');
@@ -20,6 +24,9 @@ export const Task = ({isOpen, onClose, task}) => {
     const [type, setType] = useState('');
     const [priority, setPriority] = useState('');
     const [comment, setComment] = useState('');
+    const [deadline, setDeadline] = useState();
+    const [isActiveSubTask, setIsActiveSubTask] = useState(false);
+    const [subtasks, setSubTasks] = useState([]);
     const getComments = async() => {
         let response = await axios.get(`http://localhost:3000/comments/task/${task.id}`);
         setComments(response.data)
@@ -32,6 +39,8 @@ export const Task = ({isOpen, onClose, task}) => {
             setStatus(task.status);
             setPriority(task.priority);
             setType(task.type);
+            setDeadline(task.deadline);
+            setSubTasks(task.subtasks);
             getComments();
         }
         else{
@@ -51,12 +60,14 @@ export const Task = ({isOpen, onClose, task}) => {
         task.status = status
         task.type = type
         task.priority = priority
+        task.deadline = deadline;
         const updateTask = {
             title: title,
             description: description,
             status: status,
             type: type,
-            priority: priority
+            priority: priority,
+            deadline: deadline,
           };
           axios.put(`http://localhost:3000/tasks/${task.id}`, updateTask);
     }
@@ -86,34 +97,50 @@ export const Task = ({isOpen, onClose, task}) => {
         getComments();
     }
 
+    const addSubTaskHandler = () => {
+        subTaskDispatch({ type: 'OPEN_ADD_FORM', payload: task.executors });        
+    }
+
+    const handleClose = async (removedTag) => {
+        const response = await axios.delete(`http://localhost:3000/tasks/${task.id}/executors/${removedTag.id}`, {
+        });
+        const responseTask = await axios.get(`http://localhost:3000/tasks/${task.id}`, {
+        });
+        task.executors = responseTask.data.executors;
+        setExecutors(responseTask.data.executors);
+        console.log(removedTag);
+      };
+
     return <>
         {isOpen && (
     <div className='fixed inset-0 w-full h-full bg-sky-200 bg-opacity-75 overflow-hidden overflow-y-auto transition-opacity duration-300 z-[999]'>
         <div className='absolute inset-0 flex items-center justify-center w-full min-h-full'>
             <div className='model-wrapper relative w-full max-w-[1000px] rounded-[20px] bg-white p-4 transform transition-opacity duration-300 translate-y-[-10px]'>
-                <div className="flex justify-center flex-col">
+                <div className="flex justify-center flex-col overflow-x-auto">
                     <div className='flex justify-end'>
                         <Button type="text" icon={<CloseOutlined />} onClick={onClose}></Button>
                     </div>
                     <div className="flex w-full p-4 justify-between">
-                        <div className='min-w-[250px]'>
+                        <div className='min-w-[140px]'>
                         <label className="block text-sm font-medium text-gray-700">Title</label>
                         <Input
                             type="text"
                             defaultValue={task.title}
-                            className="mt-1 mb-4 w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            className="mt-1 mb-1 w-full px-3 py-2 border border-gray-300 rounded-lg"
                             placeholder="Enter task title"
                             onChange={(e) => setTitle(e.target.value)}
                         />
                         <label className="block text-sm font-medium text-gray-700">Description</label>
                         <Input.TextArea 
-                            rows={4}
+                            rows={2}
                             defaultValue={task.description}
-                            className="mt-1   mb-4 w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            className="mt-1 mb-1 w-full px-3 py-2 border border-gray-300 rounded-lg"
                             placeholder="Enter task description"
                             style={{ resize: 'none' }}
                             onChange={(e) => setDescription(e.target.value)}
                         />
+                         <label className="block text-sm font-medium text-gray-700">Deadline</label>
+                         <DatePicker onChange={(date) => setDeadline(date)} defaultValue={dayjs(task.deadline)} className='mb-4 w-full border border-gray-300'/>
                         </div>
                         <div className='pl-6'>
                         <label className="block text-sm font-medium text-gray-700">Status</label>
@@ -151,13 +178,13 @@ export const Task = ({isOpen, onClose, task}) => {
                             onChange={(value) => setPriority(value)}
                         />
                         </div>
-                        <div className='pl-6 flex-grow flex flex-col'>
+                        <div className='min-w-[200px] pl-6 flex-grow flex flex-col'>
                         <label className="block text-sm font-medium text-gray-700">Executors</label>
                         <SearchInput
                             className='mt-2 w-full '
                             onChange={(id) => addExecutor(id)}
                         />
-                        <div className='bg-sky-50 h-full rounded-lg mt-3' style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                        <div className=' bg-sky-50 h-full rounded-lg mt-3' style={{ maxHeight: '150px', overflowY: 'auto' }}>
                         {executors.map((tag) => {
                             const isLongTag = tag.email.length > 20;
                             const displayTitle = isLongTag ? `${tag.email.slice(0, 20)}...` : tag.email;
@@ -167,6 +194,7 @@ export const Task = ({isOpen, onClose, task}) => {
                                 color="processing"
                                 closable
                                 className='m-2'
+                                onClose={() => handleClose(tag)}
                                 style={{
                                     userSelect: 'none',
                                 }}
@@ -184,7 +212,7 @@ export const Task = ({isOpen, onClose, task}) => {
                             })}
                             </div>
                         </div>
-                        <div className='flex ml-5 flex-grow flex-col'>
+                        <div className='min-w-[200px] flex ml-5 flex-col'>
                         <label className="block text-sm font-medium text-gray-700">Comments</label>
                            <div className='flex'>
                            <Input
@@ -211,6 +239,15 @@ export const Task = ({isOpen, onClose, task}) => {
                                     )}
                                 </VirtualList>
                             </List>
+                        </div>
+                        <div className=' flex ml-5 flex-col mt-5'>
+                           <div className='flex justify-center'>
+                            <Button type="text" className='bg-slate-100 mb-2' onClick={addSubTaskHandler} >Add Subtask</Button>
+                           </div>
+                           <div>
+                            <Section />
+                           </div>
+                             
                         </div>
                     </div>
                     <div className='flex'>

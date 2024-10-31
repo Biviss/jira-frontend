@@ -71,6 +71,7 @@ export const DashBoard = () => {
     let response = await axios.get(`http://localhost:3000/projects/${id}`);
     setTasks(response.data.tasks);
     setFilterTasks(response.data.tasks)
+    console.log(response.data.tasks)
 };
 
   useEffect(() => {

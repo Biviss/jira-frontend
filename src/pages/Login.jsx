@@ -8,7 +8,7 @@ const Login = () => {
   const { dispatch } = useContext(UserContext);
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole] = useState('user')
+  const [role, setRole] = useState('admin')
   const [loading, setLoading] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate();
@@ -61,7 +61,6 @@ const Login = () => {
     const formDetails = new URLSearchParams();
     formDetails.append('email',email);
     formDetails.append('password',password);
-
     try{
       const response = await fetch('http://localhost:3000/auth/login', {
           method: 'POST',
@@ -130,7 +129,7 @@ const Login = () => {
           label={<span className="font-barlow">Role</span>}
           required>
           <Select
-            defaultValue="user"
+            defaultValue="admin"
             onChange={(e) => {
               console.log(e)
               setRole(e)
